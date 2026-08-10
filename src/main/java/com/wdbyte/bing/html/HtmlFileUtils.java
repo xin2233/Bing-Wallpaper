@@ -5,6 +5,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.Map;
+
+import com.wdbyte.bing.Images;
 
 public class HtmlFileUtils {
 
@@ -30,5 +34,36 @@ public class HtmlFileUtils {
     public static void writeMonthHtml(String month, String html) throws IOException {
         Path path = BING_HTML_ROOT.resolve( month + ".html");
         write(path, html);
+    }
+
+    /**
+     * 写入月份导航数据 months.json
+     * 结构: {"months":["2026-08","2026-01",...],"latest":"2026-08"}
+     * 页面导航由 JS 动态读取该文件渲染，避免新增月份时全量重写历史页面
+     *
+     * @param monthMap
+     * @throws IOException
+     */
+    public static void writeMonthsJson(Map<String, List<Images>> monthMap) throws IOException {
+        StringBuilder json = new StringBuilder("{\"months\":[");
+        boolean first = true;
+        String latest = null;
+        for (String month : monthMap.keySet()) {
+            if (latest == null) {
+                latest = month;
+            }
+            if (!first) {
+                json.append(",");
+            }
+            json.append("\"").append(month).append("\"");
+            first = false;
+        }
+        json.append("]");
+        if (latest != null) {
+            json.append(",\"latest\":\"").append(latest).append("\"");
+        }
+        json.append("}");
+        Path path = BING_HTML_ROOT.resolve("months.json");
+        write(path, json.toString());
     }
 }

@@ -41,7 +41,7 @@
 <!-- Sidebar (hidden by default) -->
 <nav class="w3-sidebar w3-bar-block w3-card w3-top w3-xlarge w3-animate-left" style="display:none;z-index:2;max-width:200px;min-width:100px" id="mySidebar">
     <a href="javascript:void(0)" onclick="w3_close()" class="w3-bar-item w3-button">收起</a>
-    ${sidabar}
+    <div id="sidebar-nav"></div>
 </nav>
 
 <!-- !PAGE CONTENT! -->
@@ -80,7 +80,7 @@
         </div>
         <div class="w3-container w3-white">
             <p>
-                ${month_history}
+                <div id="month-history"></div>
             </p>
         </div>
     </div>
@@ -103,6 +103,38 @@
         document.getElementById("mySidebar").style.display = "none";
     }
 
+    // 动态加载月份导航数据 months.json，渲染侧边栏和底部月份历史
+    function renderNav(data) {
+        // 根据当前页面文件名推断所在月份，如 2026-08.html -> 2026-08
+        var path = window.location.pathname;
+        var match = path.match(/(\d{4}-\d{2})\.html/);
+        var nowMonth = match ? match[1] : data.latest;
+
+        // 侧边栏月份菜单
+        var sidebarHtml = '';
+        for (var i = 0; i < data.months.length; i++) {
+            var month = data.months[i];
+            var cls = (month === nowMonth) ? 'w3-green' : 'w3-hover-green';
+            sidebarHtml += '<a href="' + month + '.html" onclick="w3_close()" class="w3-bar-item w3-button ' + cls + ' w3-large">' + month + '</a>';
+        }
+        document.getElementById('sidebar-nav').innerHTML = sidebarHtml;
+
+        // 底部月份历史
+        var historyHtml = '';
+        for (var j = 0; j < data.months.length; j++) {
+            var m = data.months[j];
+            var hcls = (m === nowMonth) ? 'w3-green' : 'w3-light-grey';
+            historyHtml += '<a class="w3-tag w3-button w3-hover-green ' + hcls + ' w3-margin-bottom" href="' + m + '.html">' + m + '</a> ';
+        }
+        document.getElementById('month-history').innerHTML = historyHtml;
+    }
+
+    fetch('months.json')
+        .then(function (response) { return response.json(); })
+        .then(renderNav)
+        .catch(function (error) {
+            console.error('加载 months.json 失败:', error);
+        });
 </script>
 
 </body>

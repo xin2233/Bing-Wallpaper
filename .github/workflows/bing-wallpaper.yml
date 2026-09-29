@@ -10,7 +10,7 @@ on:
     - cron:  '1 10 * * *'
   push:
     branches:
-      - main-xin
+      - main
 
 permissions:
   contents: write
@@ -42,12 +42,6 @@ jobs:
     - name: Run Java Application
       run: java -jar target/bing-wallpaper-jar-with-dependencies.jar
     
-    - name: Save Maven cache
-      uses: actions/cache@v5
-      with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-    
     - name: Commit files
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -55,7 +49,7 @@ jobs:
         git config --global user.name "${{ github.actor }}"
         git config --global user.email "${{ github.actor }}@users.noreply.github.com"
         git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
-        git pull
+        git pull --rebase
         if ! git diff --quiet --exit-code; then
           git add README.md bing-wallpaper.md picture docs
           git commit -m "update readme.md"

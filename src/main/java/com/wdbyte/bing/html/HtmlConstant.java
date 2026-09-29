@@ -36,12 +36,11 @@ public class HtmlConstant {
         public static final String VAR_IMG_CARD_LIST = "${img_card_list}";
         private static final String VAR_IMG_CARD_URL = "${img_card_url}";
         private static final String VAR_IMG_CARD_DATE = "${img_card_date}";
-        private static final String IMG_CARD = ""
-            + "<div class=\"w3-third \" style=\"position: relative;\">\n"
-            +"  <img class=\"smallImg\" src=\"${img_card_url}&pid=hp&w=50\"  style=\"width:95%;\" />"
-            + " <img class=\"bigImg\" src=\"${img_card_url}&pid=hp&w=384&h=216&rs=1&c=4\" style=\"width:95%\" onload=\"imgloading(this)\">\n"
-            + " <p>${img_card_date} <a href=\"${img_card_url}\" target=\"_blank\">Download 4k</a> </p>\n"
-            + "</div>";
+        private static final String IMG_CARD = """
+            <div class="w3-third " style="position: relative;">
+              <img class="smallImg" src="${img_card_url}&pid=hp&w=50"  style="width:95%;" /> <img class="bigImg" src="${img_card_url}&pid=hp&w=384&h=216&rs=1&c=4" style="width:95%" onload="imgloading(this)">
+             <p>${img_card_date} <a href="${img_card_url}" target="_blank">Download 4k</a> </p>
+            </div>""";
 
         public static String getImgCard(String imgUrl,String date) {
             String result = IMG_CARD.replace(VAR_IMG_CARD_URL, imgUrl);

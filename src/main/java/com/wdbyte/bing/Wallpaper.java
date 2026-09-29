@@ -3,8 +3,6 @@ package com.wdbyte.bing;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -47,9 +45,9 @@ public class Wallpaper {
         // 图片版权
         String copyright = (String)jsonObject.get("copyright");
 
-        List<Images> imagesList = BingFileUtils.readBing();
-        imagesList.set(0,new Images(copyright, enddate, url));
-        imagesList = imagesList.stream().distinct().collect(Collectors.toList());
+        var imagesList = BingFileUtils.readBing();
+        imagesList.set(0, new Images(copyright, enddate, url));
+        imagesList = imagesList.stream().distinct().toList();
         BingFileUtils.writeBing(imagesList);
         BingFileUtils.writeReadme(imagesList);
         BingFileUtils.writeMonthInfo(imagesList);

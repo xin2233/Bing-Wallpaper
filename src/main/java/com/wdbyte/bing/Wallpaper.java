@@ -14,13 +14,13 @@ import com.wdbyte.bing.html.WebSiteGenerator;
 
 public class Wallpaper {
 
-    // BING API
-    private static String BING_API = "https://cn.bing.com/HPImageArchive.aspx?format=js&idx=0&n=10&nc=1612409408851&pid=hp&FORM=BEHPTB&uhd=1&uhdwidth=3840&uhdheight=2160";
+    // BING API，请求时追加 nc 时间戳参数避免命中缓存
+    private static final String BING_API = "https://cn.bing.com/HPImageArchive.aspx?format=js&idx=0&n=10&pid=hp&FORM=BEHPTB&uhd=1&uhdwidth=3840&uhdheight=2160";
 
-    private static String BING_URL = "https://cn.bing.com";
+    private static final String BING_URL = "https://cn.bing.com";
 
     public static void main(String[] args) throws IOException {
-        String httpContent = HttpUtls.getHttpContent(BING_API);
+        String httpContent = HttpUtls.getHttpContent(BING_API + "&nc=" + System.currentTimeMillis());
         JSONObject jsonObject = JSON.parseObject(httpContent);
         if (jsonObject == null) {
             throw new IllegalStateException("Bing API 返回内容不是合法 JSON：" + httpContent);

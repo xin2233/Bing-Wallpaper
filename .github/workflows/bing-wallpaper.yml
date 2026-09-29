@@ -49,9 +49,10 @@ jobs:
         git config --global user.name "${{ github.actor }}"
         git config --global user.email "${{ github.actor }}@users.noreply.github.com"
         git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
-        git pull --rebase
-        if ! git diff --quiet --exit-code; then
-          git add README.md bing-wallpaper.md picture docs
+        git add README.md bing-wallpaper.md picture docs
+        # 先提交再拉取：工作区有未提交改动时 git pull --rebase 会直接失败
+        if ! git diff --cached --quiet --exit-code; then
           git commit -m "update readme.md"
-          git push
         fi
+        git pull --rebase
+        git push

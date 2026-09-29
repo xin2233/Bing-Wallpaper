@@ -1,12 +1,18 @@
 package com.wdbyte.bing;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 public class HttpUtls {
+
+    private static final int CONNECT_TIMEOUT = 10 * 1000;
+
+    private static final int READ_TIMEOUT = 30 * 1000;
 
     /**
      * 获取 HTTP 连接
@@ -18,6 +24,8 @@ public class HttpUtls {
     public static HttpURLConnection getHttpUrlConnection(String url) throws IOException {
         URL httpUrl = new URL(url);
         HttpURLConnection httpConnection = (HttpURLConnection)httpUrl.openConnection();
+        httpConnection.setConnectTimeout(CONNECT_TIMEOUT);
+        httpConnection.setReadTimeout(READ_TIMEOUT);
         httpConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36");
         return httpConnection;
     }
@@ -27,26 +35,23 @@ public class HttpUtls {
      *
      * @param url
      * @return
-     * @throws IOException
+     * @throws IOException 请求失败时抛出，避免返回空内容让调用方误判
      */
     public static String getHttpContent(String url) throws IOException {
         HttpURLConnection httpUrlConnection = getHttpUrlConnection(url);
-        StringBuilder stringBuilder = new StringBuilder();
-        // 获得输入流
-        try (InputStream input = httpUrlConnection.getInputStream(); BufferedInputStream bis = new BufferedInputStream(
-            input);) {
+        try (InputStream input = httpUrlConnection.getInputStream();
+            BufferedInputStream bis = new BufferedInputStream(input)) {
+            // 先读取完整字节再一次性解码，避免多字节字符被缓冲区边界截断
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
             byte[] buffer = new byte[1024];
-            int len = -1;
-            // 读到文件末尾则返回-1
+            int len;
             while ((len = bis.read(buffer)) != -1) {
-                stringBuilder.append(new String(buffer, 0, len));
+                out.write(buffer, 0, len);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+            return new String(out.toByteArray(), StandardCharsets.UTF_8);
         } finally {
             httpUrlConnection.disconnect();
         }
-        return stringBuilder.toString();
     }
 
 }

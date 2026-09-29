@@ -11,13 +11,15 @@
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>1.2.73</version>
+            <!-- 1.2.80 及以下存在反序列化 RCE，1.2.83 为 1.x 系列的修复版本 -->
+            <version>1.2.83</version>
         </dependency>
     </dependencies>
 
@@ -47,7 +49,7 @@
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
                     <!--工程名-->
-                    <finalName>${project.name}</finalName>
+                    <finalName>${project.artifactId}</finalName>
                 </configuration>
                 <executions>
                     <execution>

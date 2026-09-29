@@ -78,8 +78,8 @@ public class WebSiteGenerator {
      * @return
      */
     public String replaceHead(String html, Images images, String month) {
-        html = html.replace(Head.HEAD_IMG_URL, images.getUrl());
-        html = html.replace(Head.HEAD_IMG_DESC, images.getDesc());
+        html = html.replace(Head.HEAD_IMG_URL, escapeHtml(images.getUrl()));
+        html = html.replace(Head.HEAD_IMG_DESC, escapeHtml(images.getDesc()));
         if (month != null) {
             html = html.replace(Head.HEAD_TITLE, "Bing Wallpaper(" + month + ")");
         } else {
@@ -91,9 +91,48 @@ public class WebSiteGenerator {
     public String replaceImgList(String html, List<Images> bingImages) {
         StringBuilder imgList = new StringBuilder();
         for (Images bingImage : bingImages) {
-            imgList.append(ImgCard.getImgCard(bingImage.getUrl(), bingImage.getDate()));
+            imgList.append(ImgCard.getImgCard(escapeHtml(bingImage.getUrl()), escapeHtml(bingImage.getDate())));
         }
         return html.replace(ImgCard.VAR_IMG_CARD_LIST, imgList.toString());
+    }
+
+    /**
+     * 转义 HTML 特殊字符
+     * <p>
+     * 图片描述来自 Bing，可能包含引号或尖括号，直接拼接会破坏页面结构。
+     *
+     * @param text
+     * @return
+     */
+    private static String escapeHtml(String text) {
+        if (text == null) {
+            return "";
+        }
+        StringBuilder escaped = new StringBuilder(text.length() + 16);
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            switch (c) {
+                case '&':
+                    escaped.append("&amp;");
+                    break;
+                case '<':
+                    escaped.append("&lt;");
+                    break;
+                case '>':
+                    escaped.append("&gt;");
+                    break;
+                case '"':
+                    escaped.append("&quot;");
+                    break;
+                case '\'':
+                    escaped.append("&#39;");
+                    break;
+                default:
+                    escaped.append(c);
+                    break;
+            }
+        }
+        return escaped.toString();
     }
 
     /**

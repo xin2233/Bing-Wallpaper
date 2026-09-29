@@ -7,10 +7,13 @@ public class Images {
     private String date;
     private String url;
 
-    @Override
-    public String toString() {
+    /**
+     * Markdown 表格中的一个单元格
+     *
+     * @return
+     */
+    public String toTableCell() {
         String smallUrl = url + "&pid=hp&w=384&h=216&rs=1&c=4";
-        //return String.format("![](%s)[%s\\| %s](%s)", smallUrl, date, desc, url);
         return String.format("![](%s)%s [download 4k](%s)", smallUrl, date, url);
     }
 

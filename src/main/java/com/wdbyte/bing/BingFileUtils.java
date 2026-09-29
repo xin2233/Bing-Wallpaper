@@ -6,7 +6,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,34 +71,6 @@ public class BingFileUtils {
             content.append(images.formatMarkdown()).append(LINE_SEPARATOR).append(LINE_SEPARATOR);
         }
         write(BING_PATH, content.toString());
-    }
-
-    /**
-     * 读取 README.md
-     *
-     * @return
-     * @throws IOException
-     */
-    public static List<Images> readReadme() throws IOException {
-        if (!Files.exists(README_PATH)) {
-            Files.createFile(README_PATH);
-        }
-        List<String> allLines = Files.readAllLines(README_PATH, StandardCharsets.UTF_8);
-        List<Images> imgList = new ArrayList<>();
-        for (int i = 3; i < allLines.size(); i++) {
-            String content = allLines.get(i);
-            Arrays.stream(content.split("\\|"))
-                .filter(s -> !s.isEmpty())
-                .map(s -> {
-                    int dateStartIndex = s.indexOf("[", 3) + 1;
-                    int urlStartIndex = s.indexOf("(", 4) + 1;
-                    String date = s.substring(dateStartIndex, dateStartIndex + 10);
-                    String url = s.substring(urlStartIndex, s.length() - 1);
-                    return new Images(null, date, url);
-                })
-                .forEach(imgList::add);
-        }
-        return imgList;
     }
 
     /**
@@ -190,7 +161,7 @@ public class BingFileUtils {
         content.append("| :----: | :----: | :----: |").append(LINE_SEPARATOR);
         int i = 1;
         for (Images images : imagesList) {
-            content.append("|").append(images);
+            content.append("|").append(images.toTableCell());
             if (i % 3 == 0) {
                 content.append("|").append(LINE_SEPARATOR);
             }

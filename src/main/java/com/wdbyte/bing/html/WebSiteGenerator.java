@@ -15,12 +15,7 @@ import com.wdbyte.bing.html.HtmlConstant.Sidebar;
 public class WebSiteGenerator {
 
     public static void main(String[] args) throws IOException {
-        List<Images> bingImages = BingFileUtils.readBing();
-        bingImages = bingImages.stream().filter(img -> img.getUrl() != null).collect(Collectors.toList());
-        Map<String, List<Images>> monthMap = BingFileUtils.convertImgListToMonthMap(bingImages);
-        WebSiteGenerator generator = new WebSiteGenerator();
-        generator.htmlGeneratorIndex(bingImages, monthMap);
-        generator.htmlGeneratorMonth(monthMap);
+        new WebSiteGenerator().htmlGenerator();
     }
 
     public void htmlGenerator() throws IOException {

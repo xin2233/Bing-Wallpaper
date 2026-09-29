@@ -22,12 +22,22 @@ public class Wallpaper {
     public static void main(String[] args) throws IOException {
         String httpContent = HttpUtls.getHttpContent(BING_API);
         JSONObject jsonObject = JSON.parseObject(httpContent);
+        if (jsonObject == null) {
+            throw new IllegalStateException("Bing API 返回内容不是合法 JSON：" + httpContent);
+        }
         JSONArray jsonArray = jsonObject.getJSONArray("images");
+        if (jsonArray == null || jsonArray.isEmpty()) {
+            throw new IllegalStateException("Bing API 未返回图片数据：" + httpContent);
+        }
 
         jsonObject = (JSONObject)jsonArray.get(0);
         // 图片地址
         String url = BING_URL + (String)jsonObject.get("url");
-        url = url.substring(0, url.indexOf("&"));
+        // 去掉 uhdwidth、uhdheight 等附加参数，只保留图片地址本身
+        int paramStart = url.indexOf("&");
+        if (paramStart > 0) {
+            url = url.substring(0, paramStart);
+        }
 
         // 图片时间
         String enddate = (String)jsonObject.get("enddate");

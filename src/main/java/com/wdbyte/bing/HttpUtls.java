@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
@@ -22,7 +23,8 @@ public class HttpUtls {
      * @throws IOException
      */
     public static HttpURLConnection getHttpUrlConnection(String url) throws IOException {
-        URL httpUrl = new URL(url);
+        // new URL(String) 自 JDK 20 起已过时，官方推荐使用 URI 转换
+        URL httpUrl = URI.create(url).toURL();
         HttpURLConnection httpConnection = (HttpURLConnection)httpUrl.openConnection();
         httpConnection.setConnectTimeout(CONNECT_TIMEOUT);
         httpConnection.setReadTimeout(READ_TIMEOUT);

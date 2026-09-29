@@ -3,7 +3,6 @@ package com.wdbyte.bing.html;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import com.wdbyte.bing.BingFileUtils;
 import com.wdbyte.bing.Images;
@@ -20,7 +19,7 @@ public class WebSiteGenerator {
 
     public void htmlGenerator() throws IOException {
         List<Images> bingImages = BingFileUtils.readBing();
-        bingImages = bingImages.stream().filter(img -> img.getUrl() != null).collect(Collectors.toList());
+        bingImages = bingImages.stream().filter(img -> img.getUrl() != null).toList();
         Map<String, List<Images>> monthMap = BingFileUtils.convertImgListToMonthMap(bingImages);
         htmlGeneratorIndex(bingImages, monthMap);
         htmlGeneratorMonth(monthMap);
@@ -109,28 +108,15 @@ public class WebSiteGenerator {
             return "";
         }
         StringBuilder escaped = new StringBuilder(text.length() + 16);
-        for (int i = 0; i < text.length(); i++) {
-            char c = text.charAt(i);
-            switch (c) {
-                case '&':
-                    escaped.append("&amp;");
-                    break;
-                case '<':
-                    escaped.append("&lt;");
-                    break;
-                case '>':
-                    escaped.append("&gt;");
-                    break;
-                case '"':
-                    escaped.append("&quot;");
-                    break;
-                case '\'':
-                    escaped.append("&#39;");
-                    break;
-                default:
-                    escaped.append(c);
-                    break;
-            }
+        for (char c : text.toCharArray()) {
+            escaped.append(switch (c) {
+                case '&' -> "&amp;";
+                case '<' -> "&lt;";
+                case '>' -> "&gt;";
+                case '"' -> "&quot;";
+                case '\'' -> "&#39;";
+                default -> String.valueOf(c);
+            });
         }
         return escaped.toString();
     }

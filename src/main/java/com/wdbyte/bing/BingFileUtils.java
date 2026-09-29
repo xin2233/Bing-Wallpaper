@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class BingFileUtils {
 
@@ -85,11 +84,11 @@ public class BingFileUtils {
         content.append(LINE_SEPARATOR);
         // 归档
         content.append("### 历史归档：").append(LINE_SEPARATOR);
-        List<String> dateList = imgList.stream()
+        var dateList = imgList.stream()
             .map(Images::getDate)
             .map(date -> date.substring(0, 7))
             .distinct()
-            .collect(Collectors.toList());
+            .toList();
         int i = 0;
         for (String date : dateList) {
             // 使用相对路径，带前导斜杠会被解析成站点根目录导致链接失效
@@ -185,7 +184,7 @@ public class BingFileUtils {
         if (parent != null && !Files.exists(parent)) {
             Files.createDirectories(parent);
         }
-        Files.write(path, content.getBytes(StandardCharsets.UTF_8));
+        Files.writeString(path, content, StandardCharsets.UTF_8);
     }
 
 }

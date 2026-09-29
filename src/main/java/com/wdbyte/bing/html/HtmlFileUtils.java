@@ -12,8 +12,7 @@ public class HtmlFileUtils {
     private static Path BING_HTML_INDEX_TEMPLATE = Paths.get("docs/bing-template.html");
 
     public static String readIndexTemplateFile() throws IOException {
-        byte[] bytes = Files.readAllBytes(BING_HTML_INDEX_TEMPLATE);
-        return new String(bytes, StandardCharsets.UTF_8);
+        return Files.readString(BING_HTML_INDEX_TEMPLATE, StandardCharsets.UTF_8);
     }
 
     public static void writeIndexHtml(String html) throws IOException {
@@ -24,7 +23,7 @@ public class HtmlFileUtils {
         if (!Files.exists(path)) {
             Files.createFile(path);
         }
-        Files.write(path, html.getBytes(StandardCharsets.UTF_8));
+        Files.writeString(path, html, StandardCharsets.UTF_8);
     }
 
     public static void writeMonthHtml(String month, String html) throws IOException {
